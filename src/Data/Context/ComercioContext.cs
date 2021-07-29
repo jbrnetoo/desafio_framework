@@ -11,7 +11,7 @@ namespace Data.Context
 
         }
 
-        public DbSet<Fruta> Produtos { get; set; }
+        public DbSet<Fruta> Frutas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

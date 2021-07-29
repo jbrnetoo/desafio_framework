@@ -2,9 +2,8 @@
 
 namespace Domain.Entidades
 {
-    public class Fruta
+    public class Fruta : Entity
     {
-        public Guid Id { get; set; }
         public string Nome { get; set; }
         public string Descricao { get; set; }
         public string Foto { get; set; }
