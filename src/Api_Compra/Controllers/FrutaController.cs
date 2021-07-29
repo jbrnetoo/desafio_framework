@@ -4,7 +4,6 @@ using Domain.Entidades;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,6 +22,10 @@ namespace Api_Compra.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Obter uma lista de frutas
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("")]
         public async Task<ActionResult> ObterFrutas()
         {
@@ -40,6 +43,11 @@ namespace Api_Compra.Controllers
             }
         }
 
+        /// <summary>
+        /// Inserir uma nova fruta no estoque
+        /// </summary>
+        /// <param name="dtoFruta">Uma fruta deve ser informada.</param> 
+        /// <returns></returns>
         [HttpPost("")]
         public async Task<ActionResult> InserirFruta(DtoFruta dtoFruta)
         {
@@ -57,8 +65,13 @@ namespace Api_Compra.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualizar Estoque
+        /// </summary>
+        /// <param name="dtoAtualizarEstoque">Id e Quantidade devem ser informados</param> 
+        /// <returns></returns>
         [HttpPut("Estoque")]
-        public async Task<ActionResult> AtualizarFruta(DtoAtualizarEstoque dtoAtualizarEstoque)
+        public async Task<ActionResult> AtualizarEstoque(DtoAtualizarEstoque dtoAtualizarEstoque)
         {
             try
             {
