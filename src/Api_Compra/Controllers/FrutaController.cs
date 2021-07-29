@@ -1,7 +1,12 @@
-﻿using Domain.Entidades;
+﻿using Api_Compra.Models;
+using AutoMapper;
+using Domain.Entidades;
+using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Api_Compra.Controllers
 {
@@ -9,14 +14,25 @@ namespace Api_Compra.Controllers
     [ApiController]
     public class FrutaController : ControllerBase
     {
+        private readonly IFrutaRepository _frutaRepository;
+        private readonly IMapper _mapper;
+
+        public FrutaController(IFrutaRepository frutaRepository, IMapper mapper)
+        {
+            _frutaRepository = frutaRepository;
+            _mapper = mapper;
+        }
+
         [HttpGet("")]
-        public IActionResult ObterFrutas()
+        public async Task<ActionResult> ObterFrutas()
         {
             try
             {
-                var teste = new { Teste = "Teste" };
+                var frutas = await _frutaRepository.ObterTodos();
 
-                return Ok(teste);
+                var listaDtoFrutas = _mapper.ProjectTo<DtoFruta>(frutas.AsQueryable());
+
+                return Ok(listaDtoFrutas);
             }
             catch (Exception ex)
             {
@@ -24,40 +40,36 @@ namespace Api_Compra.Controllers
             }
         }
 
-
-
-
-        public ActionResult Adicionar(Fruta fruta)
+        [HttpPost("")]
+        public async Task<ActionResult> InserirFruta(DtoFruta dtoFruta)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            try
+            {
+                var fruta = _mapper.Map<DtoFruta, Fruta>(dtoFruta);
 
-            var imagemNome = Guid.NewGuid() + "_" + fruta.Nome;
-            if (UploadImagem(fruta.Foto, imagemNome))
-                return BadRequest();
+                await _frutaRepository.Adicionar(fruta);
 
-            // Se não adicione no banco
-
-            return Ok();
+                return Ok("Fruta inserida!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        private bool UploadImagem(string arquivo, string imgNome)
+        [HttpPut("Estoque")]
+        public async Task<ActionResult> AtualizarFruta(DtoAtualizarEstoque dtoAtualizarEstoque)
         {
-            var imagemDataByteArray = Convert.FromBase64String(arquivo);
-
-            if (string.IsNullOrEmpty(arquivo))
+            try
             {
-                //Do Something
+                await _frutaRepository.AtualizarEstoque(dtoAtualizarEstoque.Id, dtoAtualizarEstoque.Quantidade);
+
+                return Ok("Estoque Atualizado!");
             }
-
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwrooot/imagens", imgNome);
-
-            if (System.IO.File.Exists(filePath))
+            catch (Exception ex)
             {
-                // Se já existir faça algo
+                return BadRequest(ex.Message);
             }
-
-            System.IO.File.WriteAllBytes(filePath, imagemDataByteArray);
-            return true;
         }
     }
 }

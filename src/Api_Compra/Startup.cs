@@ -32,6 +32,8 @@ namespace Api_Compra
             services.AddDbContext<ComercioContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddScoped<ComercioContext>();
             services.AddScoped<IFrutaRepository, FrutaRepository>();
         }

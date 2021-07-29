@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Data.Migrations.Comercio
+namespace Data.Migrations
 {
     public partial class Initial : Migration
     {
@@ -14,7 +14,7 @@ namespace Data.Migrations.Comercio
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Nome = table.Column<string>(type: "varchar(100)", nullable: false),
                     Descricao = table.Column<string>(type: "varchar(300)", nullable: false),
-                    Foto = table.Column<string>(type: "varchar(500)", nullable: false),
+                    Imagem = table.Column<string>(type: "varchar(500)", nullable: false),
                     Valor = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Quantidade = table.Column<int>(type: "int", nullable: false)
                 },

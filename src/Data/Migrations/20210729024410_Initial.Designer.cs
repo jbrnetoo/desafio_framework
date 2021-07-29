@@ -4,14 +4,16 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Data.Migrations.Comercio
+namespace Data.Migrations
 {
     [DbContext(typeof(ComercioContext))]
-    partial class ComercioContextModelSnapshot : ModelSnapshot
+    [Migration("20210729024410_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,7 +31,7 @@ namespace Data.Migrations.Comercio
                         .IsRequired()
                         .HasColumnType("varchar(300)");
 
-                    b.Property<string>("Foto")
+                    b.Property<string>("Imagem")
                         .IsRequired()
                         .HasColumnType("varchar(500)");
 
