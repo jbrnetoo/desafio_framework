@@ -1,0 +1,9 @@
+# Build results
+*.suo
+*.user
+*global.json
+[Pp]ublish/
+**/obj/
+**/Debug/
+**/Release/
+sqlite3/storage.ide
