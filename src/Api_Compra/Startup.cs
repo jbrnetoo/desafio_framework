@@ -1,8 +1,13 @@
+using Api_Compra.Filtros;
+using Api_Compra.Models;
 using Data.Context;
 using Data.Repository;
 using Domain.Interfaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +30,20 @@ namespace Api_Compra
             services.AddControllers();
 
             services.AddSwaggerGen();
+
+            services.AddFluentValidation();
+
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(ValidateModelAttribute));
+            });
+
+            services.AddTransient<IValidator<DtoFruta>, DtoFrutaValidator>();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             services.AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));

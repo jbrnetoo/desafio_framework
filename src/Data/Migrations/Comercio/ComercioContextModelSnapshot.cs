@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Data.Migrations
+namespace Data.Migrations.Comercio
 {
     [DbContext(typeof(ComercioContext))]
     partial class ComercioContextModelSnapshot : ModelSnapshot

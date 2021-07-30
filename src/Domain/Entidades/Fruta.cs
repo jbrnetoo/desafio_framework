@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Domain.Entidades
+﻿namespace Domain.Entidades
 {
     public class Fruta : Entity
     {

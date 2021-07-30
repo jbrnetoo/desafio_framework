@@ -84,5 +84,26 @@ namespace Api_Compra.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        /// <summary>
+        /// Remover fruta do estoque
+        /// </summary>
+        /// <param name="id">Código Guid da fruta.</param> 
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> RemoverFruta(Guid id)
+        {
+            try
+            {
+                await _frutaRepository.Remover(id);
+
+                return Ok("Fruta removida!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
