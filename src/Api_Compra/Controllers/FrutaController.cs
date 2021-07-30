@@ -2,6 +2,7 @@
 using AutoMapper;
 using Domain.Entidades;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace Api_Compra.Controllers
 {
+    [Authorize]
+    [ApiVersion("1.0")]
     [Route("[controller]")]
     [ApiController]
     public class FrutaController : ControllerBase

@@ -5,8 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="Validacoes\" />
+    <Compile Remove="Validacoes\**" />
+    <EmbeddedResource Remove="Validacoes\**" />
+    <None Remove="Validacoes\**" />
   </ItemGroup>
 
 </Project>

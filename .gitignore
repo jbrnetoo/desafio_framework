@@ -2,6 +2,7 @@
 *.suo
 *.user
 *global.json
+*dtbcache.v2
 [Pp]ublish/
 **/obj/
 **/Debug/
