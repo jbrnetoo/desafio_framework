@@ -7,7 +7,7 @@ namespace Api_Compra.Config
 {
     public static class SwaggerConfig
     {
-        public static IServiceCollection Configuration(this IServiceCollection services)
+        public static IServiceCollection Register(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {

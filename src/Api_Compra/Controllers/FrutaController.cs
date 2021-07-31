@@ -29,6 +29,7 @@ namespace Api_Compra.Controllers
             _mapper = mapper;
         }
 
+        #region ObterFrutas
         /// <summary>
         /// Obter uma lista de frutas
         /// </summary>
@@ -53,7 +54,37 @@ namespace Api_Compra.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
+        #endregion
 
+        #region ObterFrutaPorId
+        /// <summary>
+        /// Obtém uma fruta
+        /// </summary>
+        /// <param name="id">Código Guid da fruta.</param> 
+        /// <returns>
+        /// 200 - Fruta obtida com sucesso
+        /// </returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult> ObterFrutaPorId(Guid id)
+        {
+            try
+            {
+                var fruta = await _frutaRepository.ObterPorId(id);
+
+                var dtoFruta= _mapper.Map<Fruta, DtoFruta>(fruta);
+
+                return Ok(dtoFruta);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+        }
+        #endregion
+
+        #region InserirFruta
         /// <summary>
         /// Inserir uma nova fruta no estoque
         /// </summary>
@@ -79,7 +110,9 @@ namespace Api_Compra.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
+        #endregion
 
+        #region AtualizarFruta
         /// <summary>
         /// Atualizar Fruta
         /// </summary>
@@ -105,7 +138,9 @@ namespace Api_Compra.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
+        #endregion
 
+        #region AtualizarEstoque
         /// <summary>
         /// Atualizar Estoque
         /// </summary>
@@ -129,8 +164,9 @@ namespace Api_Compra.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
+        #endregion
 
-
+        #region RemoverFruta
         /// <summary>
         /// Remover fruta do estoque
         /// </summary>
@@ -154,5 +190,7 @@ namespace Api_Compra.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
+        #endregion
+
     }
 }

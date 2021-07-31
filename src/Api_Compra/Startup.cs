@@ -68,11 +68,11 @@ namespace Api_Compra
             services.AddDbContext<ComercioContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            VersioningConfig.Configuration(services);
+            VersioningConfig.Register(services);
 
             DependencyInjectionConfig.ResolveDependencies(services);
 
-            SwaggerConfig.Configuration(services);
+            SwaggerConfig.Register(services);
 
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
