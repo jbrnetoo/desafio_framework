@@ -13,22 +13,26 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 
 namespace Api_Compra
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
+
+        public Startup(IWebHostEnvironment hostEnvironment)
+        {
+            var builder = new ConfigurationBuilder()
+                  .SetBasePath(hostEnvironment.ContentRootPath)
+                  .AddJsonFile("appsettings.json", true, true)
+                  .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", true, true)
+                  .AddEnvironmentVariables();
+
+            Configuration = builder.Build();
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -53,68 +57,22 @@ namespace Api_Compra
                 options.SuppressModelStateInvalidFilter = true;
             });
 
+            services.AddLogging(logging =>
+            {
+                logging.AddKissLog();
+            });
+
             services.AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDbContext<ComercioContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            VersioningConfig.Configuration(services);
+
             DependencyInjectionConfig.ResolveDependencies(services);
 
-            services.AddLogging(logging =>
-            {
-                logging.AddKissLog();
-            });
-
-            services.AddVersionedApiExplorer(c =>
-            {
-                c.GroupNameFormat = "'v'VVV";
-                c.SubstituteApiVersionInUrl = true;
-                c.AssumeDefaultVersionWhenUnspecified = true;
-                c.DefaultApiVersion = new ApiVersion(1, 0);
-            });
-
-            services.AddApiVersioning(c =>
-            {
-                c.ReportApiVersions = true;
-                c.AssumeDefaultVersionWhenUnspecified = true;
-                c.DefaultApiVersion = new ApiVersion(1, 0);
-            });
-
-            services.AddSwaggerGen(c =>
-            {
-                c.EnableAnnotations();
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-                {
-                    Title = "API Compra",
-                    Version = "v1",
-                    Description = "Desafio sugerido pela Framework como etapa de processo seletivo"
-                });
-
-                var filePath = Path.Combine(AppContext.BaseDirectory, "Api_Compra.xml");
-                c.IncludeXmlComments(filePath);
-
-                c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
-                {
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "basic",
-                    In = ParameterLocation.Header,
-                    Description = "Basic Auth Header"
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                    {
-                        new OpenApiSecurityScheme{
-                            Reference = new OpenApiReference {
-                               Type = ReferenceType.SecurityScheme,
-                               Id = "basic"
-                            }
-                        },
-                        new string[]{ }
-                    }
-                });
-            });
+            SwaggerConfig.Configuration(services);
 
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);

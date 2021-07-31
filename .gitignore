@@ -4,6 +4,7 @@
 *global.json
 *dtbcache.v2
 [Pp]ublish/
+**sql
 **/bin/
 **/obj/
 **/Debug/
