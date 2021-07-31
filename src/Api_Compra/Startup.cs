@@ -34,6 +34,8 @@ namespace Api_Compra
 
             services.AddRouting();
 
+            services.AddCors();
+
             services.AddFluentValidation();
 
             services.AddAutoMapper(typeof(Startup));
@@ -120,11 +122,14 @@ namespace Api_Compra
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors();
+
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Documentação");
+                c.InjectStylesheet("/swagger/theme-flattop.css");
             });
 
             app.UseHttpsRedirection();
