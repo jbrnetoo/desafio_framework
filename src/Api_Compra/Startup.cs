@@ -1,11 +1,10 @@
+using Api_Compra.Config;
 using Api_Compra.Filtros;
-using Api_Compra.Models;
 using Data.Context;
-using Data.Repository;
-using Domain.Interfaces;
-using Domain.Services;
-using FluentValidation;
 using FluentValidation.AspNetCore;
+using KissLog.AspNetCore;
+using KissLog.CloudListeners.Auth;
+using KissLog.CloudListeners.RequestLogsListener;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +14,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace Api_Compra
 {
@@ -45,8 +48,6 @@ namespace Api_Compra
                 options.Filters.Add(typeof(ValidateModelAttribute));
             });
 
-            services.AddTransient<IValidator<DtoFruta>, DtoFrutaValidator>();
-
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
@@ -58,10 +59,12 @@ namespace Api_Compra
             services.AddDbContext<ComercioContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            DependencyInjectionConfig.ResolveDependencies(services);
 
-            services.AddScoped<ComercioContext>();
-            services.AddScoped<IFrutaRepository, FrutaRepository>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddLogging(logging =>
+            {
+                logging.AddKissLog();
+            });
 
             services.AddVersionedApiExplorer(c =>
             {
@@ -87,6 +90,9 @@ namespace Api_Compra
                     Version = "v1",
                     Description = "Desafio sugerido pela Framework como etapa de processo seletivo"
                 });
+
+                var filePath = Path.Combine(AppContext.BaseDirectory, "Api_Compra.xml");
+                c.IncludeXmlComments(filePath);
 
                 c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
                 {
@@ -142,9 +148,48 @@ namespace Api_Compra
 
             app.UseAuthorization();
 
+            app.UseKissLogMiddleware(options =>
+            {
+                ConfigureKissLog(options);
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        private void ConfigureKissLog(IOptionsBuilder options)
+        {
+            options.Options
+                .AppendExceptionDetails((Exception ex) =>
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    if (ex is System.NullReferenceException nullRefException)
+                    {
+                        sb.AppendLine("Important: check for null references");
+                    }
+
+                    return sb.ToString();
+                });
+
+            options.InternalLog = (message) =>
+            {
+                Debug.WriteLine(message);
+            };
+
+            RegisterKissLogListeners(options);
+        }
+
+        private void RegisterKissLogListeners(IOptionsBuilder options)
+        {
+            options.Listeners.Add(new RequestLogsApiListener(new Application(
+                Configuration["KissLog.OrganizationId"],
+                Configuration["KissLog.ApplicationId"])
+            )
+            {
+                ApiUrl = Configuration["KissLog.ApiUrl"]
             });
         }
     }

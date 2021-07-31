@@ -2,10 +2,12 @@
 using AutoMapper;
 using Domain.Entidades;
 using Domain.Interfaces;
+using KissLog;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Api_Compra.Controllers
@@ -17,18 +19,22 @@ namespace Api_Compra.Controllers
     public class FrutaController : ControllerBase
     {
         private readonly IFrutaRepository _frutaRepository;
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
 
-        public FrutaController(IFrutaRepository frutaRepository, IMapper mapper)
+        public FrutaController(IFrutaRepository frutaRepository, ILogger logger, IMapper mapper)
         {
             _frutaRepository = frutaRepository;
+            _logger = logger;
             _mapper = mapper;
         }
 
         /// <summary>
         /// Obter uma lista de frutas
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// 200 - Lista de frutas obtida com sucesso
+        /// </returns>
         [HttpGet("")]
         public async Task<ActionResult> ObterFrutas()
         {
@@ -42,7 +48,9 @@ namespace Api_Compra.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.Error(ex.Message);
+
+                return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
 
@@ -50,7 +58,9 @@ namespace Api_Compra.Controllers
         /// Inserir uma nova fruta no estoque
         /// </summary>
         /// <param name="dtoFruta">Uma fruta deve ser informada.</param> 
-        /// <returns></returns>
+        /// <returns>
+        /// 200 - Fruta inserida com sucesso
+        /// </returns>
         [HttpPost("")]
         public async Task<ActionResult> InserirFruta(DtoFruta dtoFruta)
         {
@@ -64,7 +74,35 @@ namespace Api_Compra.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.Error(ex.Message);
+
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        /// <summary>
+        /// Atualizar Fruta
+        /// </summary>
+        /// <param name="dtoFruta">Uma fruta deve ser informada.</param> 
+        /// <returns>
+        /// 200 - Fruta atualizada com sucesso
+        /// </returns>
+        [HttpPut("")]
+        public async Task<ActionResult> AtualizarFruta(DtoFruta dtoFruta)
+        {
+            try
+            {
+                var fruta = _mapper.Map<DtoFruta, Fruta>(dtoFruta);
+
+                await _frutaRepository.Atualizar(fruta);
+
+                return Ok("Fruta Atualizada!");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+
+                return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
 
@@ -72,7 +110,9 @@ namespace Api_Compra.Controllers
         /// Atualizar Estoque
         /// </summary>
         /// <param name="dtoAtualizarEstoque">Id e Quantidade devem ser informados</param> 
-        /// <returns></returns>
+        /// <returns>
+        /// 200 - Estoque atualizado com sucesso
+        /// </returns>
         [HttpPut("Estoque")]
         public async Task<ActionResult> AtualizarEstoque(DtoAtualizarEstoque dtoAtualizarEstoque)
         {
@@ -84,7 +124,9 @@ namespace Api_Compra.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.Error(ex.Message);
+
+                return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
 
@@ -93,7 +135,9 @@ namespace Api_Compra.Controllers
         /// Remover fruta do estoque
         /// </summary>
         /// <param name="id">Código Guid da fruta.</param> 
-        /// <returns></returns>
+        /// <returns>
+        /// 200 - Fruta removida com sucesso
+        /// </returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult> RemoverFruta(Guid id)
         {
@@ -105,7 +149,9 @@ namespace Api_Compra.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.Error(ex.Message);
+
+                return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
     }

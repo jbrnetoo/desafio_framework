@@ -4,7 +4,9 @@
 *global.json
 *dtbcache.v2
 [Pp]ublish/
+**/bin/
 **/obj/
 **/Debug/
 **/Release/
 sqlite3/storage.ide
+Api_Compra.xml
