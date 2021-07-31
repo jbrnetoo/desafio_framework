@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PortalComercio.Models;
 using PortalComercio.Repository.Abstract;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PortalComercio.Controllers
 {
+    //[Authorize]
     public class FrutaController : Controller
     {
         private readonly IFrutaRepository _frutaRepository;
@@ -26,9 +25,14 @@ namespace PortalComercio.Controllers
         }
 
         // GET: FrutaController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(Guid id)
         {
-            return View();
+            var fruta = _frutaRepository.ObterPorId(id);
+
+            if (fruta == null)
+                return NotFound();
+
+            return View(fruta);
         }
 
         // GET: FrutaController/Create
@@ -40,58 +44,74 @@ namespace PortalComercio.Controllers
         // POST: FrutaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(DtoFruta dtoFruta)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                dtoFruta.Id = Guid.NewGuid();
+                var result = _frutaRepository.InserirFruta(dtoFruta);
+
+                if (result)
+                    return RedirectToAction("Index");
+                else
+                    return View(dtoFruta);
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(dtoFruta);
         }
 
         // GET: FrutaController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
-            return View();
+            var fruta = _frutaRepository.ObterPorId(id);
+
+            if (fruta == null)
+                return NotFound();
+
+            return View(fruta);
         }
 
         // POST: FrutaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Guid id, DtoFruta dtoFruta)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            if (id != dtoFruta.Id) return NotFound();
+
+            if (!ModelState.IsValid) return View(dtoFruta);
+
+            var result = _frutaRepository.AtualizarFruta(dtoFruta);
+
+            if (result)
+                return RedirectToAction("Index");
+            else
+                return View(dtoFruta);
         }
 
         // GET: FrutaController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Guid id)
         {
-            return View();
+            var fruta = _frutaRepository.ObterPorId(id);
+
+            if (fruta == null)
+                return NotFound();
+
+            return View(fruta);
         }
 
         // POST: FrutaController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult DeleteConfirmed(Guid id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var fruta = _frutaRepository.ObterPorId(id);
+
+            if (fruta == null)
+                return NotFound();
+
+            _frutaRepository.RemoverFruta(id);
+
+            return RedirectToAction("Index");
         }
     }
 }
