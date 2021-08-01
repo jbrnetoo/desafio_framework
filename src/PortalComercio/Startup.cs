@@ -8,6 +8,10 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using PortalComercio.Repository.Abstract;
 using PortalComercio.Repository.Concrete;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using System.Collections.Generic;
+using PortalComercio.Config;
 
 namespace PortalComercio
 {
@@ -31,7 +35,7 @@ namespace PortalComercio
 
             services.AddScoped<IFrutaRepository, FrutaRepository>();
 
-            services.AddControllersWithViews();
+            services.AddMvcConfiguration();
 
             services.AddRazorPages();
         }
@@ -56,6 +60,8 @@ namespace PortalComercio
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseGlobalizationConfig();
 
             app.UseEndpoints(endpoints =>
             {

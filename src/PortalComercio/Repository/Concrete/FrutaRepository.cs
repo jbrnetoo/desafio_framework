@@ -74,6 +74,7 @@ namespace PortalComercio.Repository.Concrete
         {
             using (var httpClient = ObterHttpClient())
             {
+                fruta.ImagemUpload = null;
                 var jsonBody = JsonConvert.SerializeObject(fruta);
                 var stringContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
@@ -87,6 +88,7 @@ namespace PortalComercio.Repository.Concrete
         {
             using (var httpClient = ObterHttpClient())
             {
+                fruta.ImagemUpload = null;
                 var jsonBody = JsonConvert.SerializeObject(fruta);
                 var stringContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 

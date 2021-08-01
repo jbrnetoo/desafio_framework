@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalComercio.Models;
 using PortalComercio.Repository.Abstract;
 using System;
+using System.IO;
 
 namespace PortalComercio.Controllers
 {
@@ -49,6 +51,15 @@ namespace PortalComercio.Controllers
             if (ModelState.IsValid)
             {
                 dtoFruta.Id = Guid.NewGuid();
+
+                var imgPrefixo = Guid.NewGuid() + "_";
+
+                if (!UploadArquivo(dtoFruta.ImagemUpload, imgPrefixo))
+                {
+                    return View(dtoFruta);
+                }
+
+                dtoFruta.Imagem = imgPrefixo + dtoFruta.ImagemUpload.FileName;
                 var result = _frutaRepository.InserirFruta(dtoFruta);
 
                 if (result)
@@ -80,7 +91,26 @@ namespace PortalComercio.Controllers
 
             if (!ModelState.IsValid) return View(dtoFruta);
 
-            var result = _frutaRepository.AtualizarFruta(dtoFruta);
+            var frutaAtualizacao = _frutaRepository.ObterPorId(id);
+            dtoFruta.Imagem = frutaAtualizacao.Imagem;
+
+            if (dtoFruta.ImagemUpload != null)
+            {
+                var imgPrefixo = Guid.NewGuid() + "_";
+                if (!UploadArquivo(dtoFruta.ImagemUpload, imgPrefixo))
+                {
+                    return View(dtoFruta);
+                }
+
+                frutaAtualizacao.Imagem = imgPrefixo + dtoFruta.ImagemUpload.FileName;
+            }
+
+            frutaAtualizacao.Nome = dtoFruta.Nome;
+            frutaAtualizacao.Descricao = dtoFruta.Descricao;
+            frutaAtualizacao.Valor = dtoFruta.Valor;
+            frutaAtualizacao.Quantidade = dtoFruta.Quantidade;
+
+            var result = _frutaRepository.AtualizarFruta(frutaAtualizacao);
 
             if (result)
                 return RedirectToAction("Index");
@@ -112,6 +142,26 @@ namespace PortalComercio.Controllers
             _frutaRepository.RemoverFruta(id);
 
             return RedirectToAction("Index");
+        }
+
+        private bool UploadArquivo(IFormFile arquivo, string imgPrefixo)
+        {
+            if (arquivo.Length <= 0) return false;
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens", imgPrefixo + arquivo.FileName);
+
+            if (System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError(string.Empty, "Já existe um arquivo com este nome!");
+                return false;
+            }
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                arquivo.CopyToAsync(stream);
+            }
+
+            return true;
         }
     }
 }
