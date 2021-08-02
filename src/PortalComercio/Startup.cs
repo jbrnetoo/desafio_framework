@@ -67,7 +67,7 @@ namespace PortalComercio
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Fruta}/{action=Index}/{id?}");
+                    pattern: "{controller=Vitrine}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
