@@ -1,9 +1,6 @@
 ﻿using Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Data.Mappings
 {
@@ -21,7 +18,7 @@ namespace Data.Mappings
               .IsRequired()
               .HasColumnType("varchar(300)");
 
-            builder.Property(f => f.Foto)
+            builder.Property(f => f.Imagem)
               .IsRequired()
               .HasColumnType("varchar(500)");
 

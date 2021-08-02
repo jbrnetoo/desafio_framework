@@ -1,11 +1,14 @@
+using Data.Context;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Data.Context;
-using Microsoft.EntityFrameworkCore;
+using PortalComercio.Config;
+using PortalComercio.Repository.Abstract;
+using PortalComercio.Repository.Concrete;
 
 namespace PortalComercio
 {
@@ -27,7 +30,9 @@ namespace PortalComercio
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddControllersWithViews();
+            services.AddScoped<IFrutaRepository, FrutaRepository>();
+
+            services.AddMvcConfiguration();
 
             services.AddRazorPages();
         }
@@ -53,11 +58,13 @@ namespace PortalComercio
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseGlobalizationConfig();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Vitrine}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }

@@ -1,0 +1,16 @@
+﻿@model IEnumerable<PortalComercio.Models.DtoFruta>
+
+@{
+    ViewData["Title"] = "Lista de Frutas";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<vc:Summary></vc:Summary>
+
+<p supress-by-claim-name="Fruta" supress-by-claim-value="Adicionar">
+    <a class="btn btn-info" asp-action="Create">Nova Fruta</a>
+</p>
+
+<partial name="_ListaFrutas" />

@@ -1,0 +1,111 @@
+﻿@model IEnumerable<PortalComercio.Models.DtoFruta>
+
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th style="width:70ex;">
+                @Html.DisplayNameFor(model => model.Descricao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantidade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Valor)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="~/imagens/@item.Imagem" alt="@item.Imagem" style="width: 80px; height: 80px" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descricao)
+                </td>
+                <td>
+                    <div class="form-group">
+                        <input type="number" placeholder="0" min="0" onchange="SomaValorTotal(this)" oninput="this.value = Math.abs(this.value)" class="form-control" id="@item.Id" style="width:75px;" />
+                        <div style="display:none;" id="@item.Id-quantidade">0</div>
+                    </div>
+                </td>
+                <td>
+                    @item.Valor.ToString("C")
+                </td>
+                <td class="text-right">
+                    <a class="btn btn-warning" asp-controller="" asp-action="" asp-route-id="@item.Id"><spam class="fa fa-cart-plus"></spam> </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <h3 id="totalPedido" class="text-dark" style="-webkit-text-stroke:medium;margin-top:40px;">Total do Pedido: R$0,00</h3>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+    var somaPedido = 0
+
+    function SomaValorTotal(elemento) {
+        let id = elemento.id
+        let quantidade = parseInt(elemento.value)
+        var divQuantidade = document.getElementById(id + "-quantidade")
+
+         $.ajax({
+            url: '@Url.Action("ObterValorFruta")',
+            type: "GET",
+            data: { Id: id },
+            contentType: "application/json; charset=utf-8",
+            error: function (t) {
+                console.log("Não foi possível finalizar a ação. Tente novamente mais tarde!")
+            },
+         }).done(function (result) {
+             var valorFruta = result
+
+             let soma = 0
+
+             let ultimaQuantidade = parseInt(divQuantidade.innerText)
+
+             if (ultimaQuantidade === 0) {
+                 soma = valorFruta * quantidade
+                 AtualizarEstoque(id, quantidade)
+             } else {
+                 soma = valorFruta * (quantidade - ultimaQuantidade)
+                 AtualizarEstoque(id, (quantidade - ultimaQuantidade))
+             }
+
+             somaPedido += soma
+
+             divQuantidade.innerText = quantidade
+             document.getElementById("totalPedido").innerText = "Total do Pedido: R$" + Math.abs(somaPedido).toFixed(2)
+         })
+
+     
+    }
+
+    function AtualizarEstoque(id, quantidade) {
+        $.ajax({
+            url: '@Url.Action("AtualizarEstoque")',
+            type: "GET",
+            data: { Id: id, Quantidade: quantidade },
+            contentType: "application/json; charset=utf-8",
+            error: function (t) {
+                console.log("Não foi possível finalizar a ação. Tente novamente mais tarde!")
+            },
+        }).done(function (result, status, response) {
+            console.log("Estoque da fruta atualizado!")
+        })
+    }
+</script>

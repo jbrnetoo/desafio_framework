@@ -29,7 +29,7 @@ namespace Data.Migrations.Comercio
                         .IsRequired()
                         .HasColumnType("varchar(300)");
 
-                    b.Property<string>("Foto")
+                    b.Property<string>("Imagem")
                         .IsRequired()
                         .HasColumnType("varchar(500)");
 

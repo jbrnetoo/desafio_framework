@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations.Comercio
 {
     [DbContext(typeof(ComercioContext))]
-    [Migration("20210729001344_Initial")]
+    [Migration("20210729124452_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,7 +31,7 @@ namespace Data.Migrations.Comercio
                         .IsRequired()
                         .HasColumnType("varchar(300)");
 
-                    b.Property<string>("Foto")
+                    b.Property<string>("Imagem")
                         .IsRequired()
                         .HasColumnType("varchar(500)");
 
