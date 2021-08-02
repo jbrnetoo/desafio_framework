@@ -1,17 +1,14 @@
+using Data.Context;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Data.Context;
-using Microsoft.EntityFrameworkCore;
+using PortalComercio.Config;
 using PortalComercio.Repository.Abstract;
 using PortalComercio.Repository.Concrete;
-using System.Globalization;
-using Microsoft.AspNetCore.Localization;
-using System.Collections.Generic;
-using PortalComercio.Config;
 
 namespace PortalComercio
 {

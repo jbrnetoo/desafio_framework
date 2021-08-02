@@ -1,5 +1,3 @@
-using System;
-
 namespace PortalComercio.Models
 {
     public class ErrorViewModel

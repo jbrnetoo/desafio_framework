@@ -46,7 +46,7 @@ namespace Api_Compra
 
                 if (!_userService.CheckUser(username, password))
                     throw new ArgumentException("Usuário ou senha inválido");
-                
+
             }
             catch (Exception ex)
             {

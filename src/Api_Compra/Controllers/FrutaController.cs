@@ -71,7 +71,7 @@ namespace Api_Compra.Controllers
             {
                 var fruta = await _frutaRepository.ObterPorId(id);
 
-                var dtoFruta= _mapper.Map<Fruta, DtoFruta>(fruta);
+                var dtoFruta = _mapper.Map<Fruta, DtoFruta>(fruta);
 
                 return Ok(dtoFruta);
             }

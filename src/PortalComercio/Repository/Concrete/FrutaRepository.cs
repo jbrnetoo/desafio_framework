@@ -68,7 +68,7 @@ namespace PortalComercio.Repository.Concrete
 
                 return response.IsSuccessStatusCode;
             }
-        } 
+        }
 
         public bool AtualizarFruta(DtoFruta fruta)
         {
